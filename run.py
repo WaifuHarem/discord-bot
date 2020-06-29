@@ -108,4 +108,11 @@ class DiscordBot():
         os.remove(filename)
         
 
-client.run(discord_token)
+if __name__ == '__main__':
+    if not os.path.isdir('tmp'):
+        try: os.mkdir('tmp')
+        except OSError as e:
+            print('Error creating directory "tmp", error: ', e)
+            exit(1)
+
+    client.run(discord_token)
