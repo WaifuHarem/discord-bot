@@ -30,6 +30,9 @@ class Ffr():
     red   = 0
     green = 1
     blue  = 2
+
+    # Regexes for detecting stuff in strings
+    regex_num = r'\s*(\d+((,\d{3})*)?(\.\d+)?)'
     
     def __init__(self, filename):
         '''
@@ -183,56 +186,57 @@ class Ffr():
 
         img = self.get_amazing_img()
         data = OCR.detect_data(img)
-        match = re.search(r"Amazing:\s*(\d+)", ' '.join(data['text']))
+        print(' '.join(data['text']))
+        match = re.search(r"Amazing:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['amazing_score'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_perfect_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"Perfect:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"Perfect:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['perfect_score'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_good_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"Good:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"Good:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['good_score'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_average_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"Average:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"Average:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['average_score'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_miss_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"Miss:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"Miss:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['miss_score'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_boo_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"Boo:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"Boo:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['miss_score'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_aaa_equiv_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"AAA Equivalency:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"AAA Equivalency:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['AAA_equiv'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
         img = self.get_raw_goods_img()
         data = OCR.detect_data(img)
         print(' '.join(data['text']))
-        match = re.search(r"Raw Goods:\s*(\d+)", ' '.join(data['text']))
+        match = re.search(r"Raw Goods:" + Ffr.regex_num, ' '.join(data['text']))
         if match: img_data['text']['raw_goods'] = match.group(1)
         img_data['imgs'].append(Ffr.draw_boundary(img, data))
 
