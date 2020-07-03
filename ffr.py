@@ -97,7 +97,20 @@ class Ffr():
     def get_good_img(self): return self.__get_info_img('good')
     def get_average_img(self): return self.__get_info_img('average')
     def get_miss_img(self): return self.__get_info_img('miss')
-    def get_boo_img(self): return self.__get_info_img('boo')
+
+    def get_boo_img(self):
+        boo_target_width = 312
+        boo_target_height = 38
+
+        img = self.__get_info_img('boo')
+
+        # height, width, number of channels in image
+        height   = img.shape[0]
+        width    = img.shape[1]
+
+        img = cv2.resize(img, (0,0), fx=boo_target_width/width, fy=boo_target_height/height, interpolation=cv2.INTER_NEAREST)
+        return img
+
     def get_aaa_equiv_img(self): return self.__get_info_img('aaa_equiv')
     def get_raw_goods_img(self): return self.__get_info_img('raw_goods')
 
