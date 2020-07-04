@@ -11,6 +11,7 @@ class FfrTxtProcessing():
         txt = txt.replace(',', '')
         txt = txt.replace('O', '0')
         txt = txt.replace('Q', '0')
+        print('LIGHTS IF YOU CAN SEE THIS I AM FFFFF AWSFAFA  |   txt: ', txt)
         
         try: return float(txt)
         except ValueError:
