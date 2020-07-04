@@ -67,7 +67,7 @@ class DiscordBot():
                 
                 #channel = msg.channel
                 channel = client.get_channel(DiscordBot.post_channel_id)
-                if channel: await client.get_channel(DiscordBot.post_channel_id).send(text)
+                if channel: await channel.send(text)
                 else: print('Channel does not exit')
 
                 for img in data['imgs']:
@@ -98,7 +98,7 @@ class DiscordBot():
             
             #channel = msg.channel
             channel = client.get_channel(DiscordBot.post_channel_id)
-            if channel: await client.get_channel(DiscordBot.post_channel_id).send(text)
+            if channel: await channel.send(text)
 
             for img in data['imgs']:
                 await DiscordBot.post_image(msg, img)
