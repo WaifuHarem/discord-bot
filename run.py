@@ -9,7 +9,7 @@ import os
 
 from config import discord_token
 from ocr import OCR
-from ffr import Ffr
+from ffr.ffr_core import FfrCore
 
 client = discord.Client()
 
@@ -17,6 +17,7 @@ client = discord.Client()
 class DiscordBot():
 
     url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    post_channel_id = 672280665768591371
 
     @staticmethod
     @client.event
@@ -60,9 +61,14 @@ class DiscordBot():
                 with open(filename, 'wb') as f:
                     await attachment.save(f)
 
-                data = Ffr(filename).process_image()
+                data = FfrCore(filename).process_image()
+
                 text = ''.join([ f'{key}: {val}\n' for key, val in data['text'].items() ])
-                await msg.channel.send(text)
+                
+                #channel = msg.channel
+                channel = client.get_channel(DiscordBot.post_channel_id)
+                if channel: await client.get_channel(DiscordBot.post_channel_id).send(text)
+                else: print('Channel does not exit')
 
                 for img in data['imgs']:
                     await DiscordBot.post_image(msg, img)
@@ -87,13 +93,16 @@ class DiscordBot():
             with open(filename, 'wb') as handler:
                 handler.write(img_data)
             
-            data = Ffr(filename).process_image()
+            data = FfrCore(filename).process_image()
             text = ''.join([ f'{key}: {val}\n' for key, val in data['text'].items() ])
-            await msg.channel.send(text)
+            
+            #channel = msg.channel
+            channel = client.get_channel(DiscordBot.post_channel_id)
+            if channel: await client.get_channel(DiscordBot.post_channel_id).send(text)
 
             for img in data['imgs']:
                 await DiscordBot.post_image(msg, img)
-
+                
             os.remove(filename)
 
 
@@ -104,7 +113,10 @@ class DiscordBot():
 
         cv2.imwrite(filename, img) 
         with open(filename, 'rb') as f:
-            await msg.channel.send(file=discord.File(f))
+            #channel = msg.channel
+            channel = client.get_channel(DiscordBot.post_channel_id)
+            if channel: await channel.send(file=discord.File(f))
+            else: print('Channel does not exit')
         os.remove(filename)
         
 
