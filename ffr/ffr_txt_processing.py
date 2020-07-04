@@ -6,6 +6,16 @@ class FfrTxtProcessing():
     # Regexes for detecting stuff in strings
     regex_num = r'\s*(\d+((,\d{3})*)?(\.\d+)?)'
    
+    @staticmethod
+    def txt_to_float(txt):
+        txt = txt.replace(',', '')
+        try: return float(txt)
+        except ValueError:
+            txt.replace('O', '0')
+            try: return float(txt)
+            except ValueError:
+                print('Unable to convert str to float; txt: ', txt)
+
 
     @staticmethod
     def get_date_info_txt(text):
@@ -15,13 +25,13 @@ class FfrTxtProcessing():
         regex = r"(\d+):(\d+):(\d+)(am|pm)\D*(\d+)/(\d+)/(\d+)"
         match = re.search(regex, text)
         if match:
-            data['hour']   = match.group(1)
-            data['minute'] = match.group(2)
-            data['second'] = match.group(3)
+            data['hour']   = FfrTxtProcessing.txt_to_float(match.group(1))
+            data['minute'] = FfrTxtProcessing.txt_to_float(match.group(2))
+            data['second'] = FfrTxtProcessing.txt_to_float(match.group(3))
             data['ampm']   = match.group(4)
-            data['month']  = match.group(5)
-            data['day']    = match.group(6)
-            data['year']   = match.group(7)
+            data['month']  = FfrTxtProcessing.txt_to_float(match.group(5))
+            data['day']    = FfrTxtProcessing.txt_to_float(match.group(6))
+            data['year']   = FfrTxtProcessing.txt_to_float(match.group(7))
 
         return data
 
@@ -60,9 +70,9 @@ class FfrTxtProcessing():
         regex = r"Difficulty:\D*(\d+)\D*Length:\D*(\d+):(\d+)\D*Artist:([^-]+)\D*Stepfile by:([^-]+)"
         match = re.search(regex, text)
         if match:
-            data['difficulty'] = match.group(1)
-            data['length_min'] = match.group(2)
-            data['length_sec'] = match.group(3)
+            data['difficulty'] = FfrTxtProcessing.txt_to_float(match.group(1))
+            data['length_min'] = FfrTxtProcessing.txt_to_float(match.group(2))
+            data['length_sec'] = FfrTxtProcessing.txt_to_float(match.group(3))
             data['artist']     = match.group(4)
             data['creator']    = match.group(5)
 
@@ -77,7 +87,7 @@ class FfrTxtProcessing():
         regex = r"Amazing:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['amazing_score'] = match.group(1)
+            data['amazing_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -90,7 +100,7 @@ class FfrTxtProcessing():
         regex = r"Perfect:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['perfect_score'] = match.group(1)
+            data['perfect_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -103,7 +113,7 @@ class FfrTxtProcessing():
         regex = r"Good:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['good_score'] = match.group(1)
+            data['good_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -116,7 +126,7 @@ class FfrTxtProcessing():
         regex = r"Average:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['average_score'] = match.group(1)
+            data['average_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -129,7 +139,7 @@ class FfrTxtProcessing():
         regex = r"Miss:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['miss_score'] = match.group(1)
+            data['miss_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -142,7 +152,7 @@ class FfrTxtProcessing():
         regex = r"Boo:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['boo_score'] = match.group(1)
+            data['boo_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -155,7 +165,7 @@ class FfrTxtProcessing():
         regex = r"AAA Equivalency:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['AAA_equiv'] = match.group(1)
+            data['AAA_equiv'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
 
@@ -168,6 +178,6 @@ class FfrTxtProcessing():
         regex = r"Raw Goods:" + FfrTxtProcessing.regex_num
         match = re.search(regex, text)
         if match:
-            data['raw_goods'] = match.group(1)
+            data['raw_goods'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
