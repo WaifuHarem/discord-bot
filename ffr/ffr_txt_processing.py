@@ -3,15 +3,11 @@ import re
 
 class FfrTxtProcessing():
 
-    # Regexes for detecting stuff in strings
-    regex_num = r'\s*(\d+((,\d{3})*)?(\.\d+)?)'
-   
     @staticmethod
     def txt_to_float(txt):
         txt = txt.replace(',', '')
         txt = txt.replace('O', '0')
         txt = txt.replace('Q', '0')
-        print('LIGHTS IF YOU CAN SEE THIS I AM FFFFF AWSFAFA  |   txt: ', txt)
         
         try: return float(txt)
         except ValueError:
@@ -85,7 +81,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Amazing:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['amazing_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -98,7 +94,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Perfect:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['perfect_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -111,7 +107,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Good:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['good_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -124,7 +120,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Average:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['average_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -137,7 +133,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Miss:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['miss_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -150,7 +146,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Boo:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['boo_score'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -163,7 +159,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"AAA Equivalency:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['AAA_equiv'] = FfrTxtProcessing.txt_to_float(match.group(1))
@@ -176,7 +172,7 @@ class FfrTxtProcessing():
         data = {}
         print(text)
 
-        regex = r"Raw Goods:" + FfrTxtProcessing.regex_num
+        regex = r":\s*(\S+)$"
         match = re.search(regex, text)
         if match:
             data['raw_goods'] = FfrTxtProcessing.txt_to_float(match.group(1))
