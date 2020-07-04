@@ -9,12 +9,12 @@ class FfrTxtProcessing():
     @staticmethod
     def txt_to_float(txt):
         txt = txt.replace(',', '')
+        txt = txt.replace('O', '0')
+        txt = txt.replace('Q', '0')
+        
         try: return float(txt)
         except ValueError:
-            txt.replace('O', '0')
-            try: return float(txt)
-            except ValueError:
-                print('Unable to convert str to float; txt: ', txt)
+            print('Unable to convert str to float; txt: ', txt)
 
 
     @staticmethod
