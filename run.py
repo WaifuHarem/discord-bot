@@ -60,6 +60,9 @@ class DiscordBot():
         if msg.content.startswith('.score'):
             pass
 
+        if msg.content.startswith('.test'):
+            DbClient.request(DbClient.REQUEST_NOP, msg.author.id, {})
+
 
     @staticmethod
     async def process_attachments(msg):
@@ -110,7 +113,7 @@ class DiscordBot():
         if channel: await DiscordBot.post(channel, data)
         else: DiscordBot.logger.info('Channel does not exit')
 
-        DbClient.request_add_score(msg.author.id, data['req'])
+        DbClient.request(DbClient.REQUEST_ADD_SCORE, msg.author.id, data['req'])
 
 
     @staticmethod

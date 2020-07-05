@@ -7,20 +7,22 @@ class DbClient():
 
     session = requests.session()
 
+    REQUEST_NOP       = 0
     REQUEST_ADD_SCORE = 1
 
     REPLY_GOOD = 0
 
     logger = logging.getLogger('bot.DbClient')
     
+
     @staticmethod
-    def request_add_score(userid, data):
+    def request(opcode, userid, data):
         request = {
-            'cmd'    : DbClient.REQUEST_ADD_SCORE,
+            'cmd'    : opcode,
             'userid' : userid,
             'data'   : data
         }
-        
+
         try: response = DbClient.session.post('http://127.0.0.1:8000', data=request)
         except requests.exceptions.ConnectionError as e:
             DbClient.logger.error(e)
