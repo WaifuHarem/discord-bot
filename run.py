@@ -91,10 +91,24 @@ class DiscordBot():
     @staticmethod
     async def process_image(msg, filename):
         data = FfrCore(filename).process_image()
+        if not DiscordBot.is_detection_valid(data['req'].values(), 0.6):
+            print('Invalid detection')
+            return
+
         channel = msg.channel
         #channel = client.get_channel(DiscordBot.post_channel_id)
         if channel: await DiscordBot.post(channel, data)
         else: print('Channel does not exit')
+
+
+    @staticmethod
+    def is_detection_valid(values, threshold):
+        '''
+        If % of values that are not None exceeds 
+        threshold, then the detection is valid
+        '''
+        num_not_none = sum([1 for value in values if value != None])
+        return (num_not_none/len(values)) > threshold
 
         
     @staticmethod
