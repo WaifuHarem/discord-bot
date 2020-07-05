@@ -166,7 +166,6 @@ class FfrCore():
         except TypeError as e:
             print('Unable to process score data;', e)
 
-
         return data
 
 

@@ -10,6 +10,7 @@ import os
 from config import discord_token
 from ocr import OCR
 from ffr.ffr_core import FfrCore
+from db_client import DbClient
 
 client = discord.Client()
 
@@ -82,9 +83,9 @@ class DiscordBot():
             img_data = requests.get(url[0]).content
             with open(filename, 'wb') as handler:
                 handler.write(img_data)
+
+            await DiscordBot.process_image(msg, filename)                
             
-            await DiscordBot.process_image(msg, filename)
-                
             os.remove(filename)
 
 
@@ -99,6 +100,8 @@ class DiscordBot():
         #channel = client.get_channel(DiscordBot.post_channel_id)
         if channel: await DiscordBot.post(channel, data)
         else: print('Channel does not exit')
+
+        DbClient.request_add_score(msg.author.id, data['req'])
 
 
     @staticmethod
@@ -125,6 +128,7 @@ class DiscordBot():
                 if channel: await channel.send(file=discord.File(f))
                 else: print('Channel does not exit')
             os.remove(filename)
+
 
 
 if __name__ == '__main__':
