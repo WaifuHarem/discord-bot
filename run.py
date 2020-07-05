@@ -61,17 +61,7 @@ class DiscordBot():
                 with open(filename, 'wb') as f:
                     await attachment.save(f)
 
-                data = FfrCore(filename).process_image()
-
-                text = ''.join([ f'{key}: {val}\n' for key, val in data['text'].items() ])
-                
-                #channel = msg.channel
-                channel = client.get_channel(DiscordBot.post_channel_id)
-                if channel: await channel.send(text)
-                else: print('Channel does not exit')
-
-                for img in data['imgs']:
-                    await DiscordBot.post_image(msg, img)
+                await DiscordBot.process_image(msg, filename)
 
                 os.remove(filename)
 
@@ -93,32 +83,35 @@ class DiscordBot():
             with open(filename, 'wb') as handler:
                 handler.write(img_data)
             
-            data = FfrCore(filename).process_image()
-            text = ''.join([ f'{key}: {val}\n' for key, val in data['text'].items() ])
-            
-            #channel = msg.channel
-            channel = client.get_channel(DiscordBot.post_channel_id)
-            if channel: await channel.send(text)
-
-            for img in data['imgs']:
-                await DiscordBot.post_image(msg, img)
+            await DiscordBot.process_image(msg, filename)
                 
             os.remove(filename)
 
 
     @staticmethod
-    async def post_image(msg, img):
-        random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
-        filename = f'tmp/{random_string}.jpg'
+    async def process_image(msg, filename):
+        data = FfrCore(filename).process_image()
+        channel = msg.channel
+        #channel = client.get_channel(DiscordBot.post_channel_id)
+        if channel: await DiscordBot.post(channel, data)
+        else: print('Channel does not exit')
 
-        cv2.imwrite(filename, img) 
-        with open(filename, 'rb') as f:
-            #channel = msg.channel
-            channel = client.get_channel(DiscordBot.post_channel_id)
-            if channel: await channel.send(file=discord.File(f))
-            else: print('Channel does not exit')
-        os.remove(filename)
         
+    @staticmethod
+    async def post(channel, data):
+        text = ''.join([ f'{key}: {val}\n' for key, val in data['text'].items() ])
+        await channel.send(text)
+
+        for img in data['imgs']:
+            random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
+            filename = f'tmp/{random_string}.jpg'
+
+            cv2.imwrite(filename, img) 
+            with open(filename, 'rb') as f:
+                if channel: await channel.send(file=discord.File(f))
+                else: print('Channel does not exit')
+            os.remove(filename)
+
 
 if __name__ == '__main__':
     if not os.path.isdir('tmp'):
