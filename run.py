@@ -1,3 +1,7 @@
+import logging
+from logger import Logger
+logging.setLoggerClass(Logger)
+
 import requests
 import discord
 import string
@@ -8,6 +12,8 @@ import re
 import os
 
 from config import discord_token
+from utils import mkdir
+
 from ocr import OCR
 from ffr.ffr_core import FfrCore
 from db_client import DbClient
@@ -19,6 +25,8 @@ class DiscordBot():
 
     url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     post_channel_id = 672280665768591371
+
+    logger = logging.getLogger('bot.discordBot')
 
     @staticmethod
     @client.event
@@ -35,13 +43,14 @@ class DiscordBot():
     @staticmethod
     @client.event
     async def on_ready():
-        print('Bot ready')
+        DiscordBot.logger.info('Bot ready')
         await client.change_presence(activity=discord.Game('Use me! Try .help'), status=discord.Status.online, afk=False)
 
 
     @staticmethod
     async def process_cmd(msg):
         if msg.content.startswith('.die'):
+            DiscordBot.logger.info('Bot shutting down')
             await msg.channel.send('owh noe')
             exit(0)
 
@@ -67,7 +76,7 @@ class DiscordBot():
                 os.remove(filename)
 
             except Exception as e:
-                print(e)
+                DiscordBot.logger.error(e)
 
 
     @staticmethod
@@ -93,13 +102,13 @@ class DiscordBot():
     async def process_image(msg, filename):
         data = FfrCore(filename).process_image()
         if not DiscordBot.is_detection_valid(data['req'].values(), 0.6):
-            print('Invalid detection')
+            DiscordBot.logger.info('Invalid detection')
             return
 
         channel = msg.channel
         #channel = client.get_channel(DiscordBot.post_channel_id)
         if channel: await DiscordBot.post(channel, data)
-        else: print('Channel does not exit')
+        else: DiscordBot.logger.info('Channel does not exit')
 
         DbClient.request_add_score(msg.author.id, data['req'])
 
@@ -126,16 +135,14 @@ class DiscordBot():
             cv2.imwrite(filename, img) 
             with open(filename, 'rb') as f:
                 if channel: await channel.send(file=discord.File(f))
-                else: print('Channel does not exit')
+                else: DiscordBot.logger.info('Channel does not exit')
             os.remove(filename)
 
 
 
 if __name__ == '__main__':
-    if not os.path.isdir('tmp'):
-        try: os.mkdir('tmp')
-        except OSError as e:
-            print('Error creating directory "tmp", error: ', e)
-            exit(1)
+    try: mkdir('tmp')
+    except OSError as e:
+        print('Unable to make directory named "tmp";', e)
 
     client.run(discord_token)

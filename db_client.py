@@ -1,4 +1,5 @@
 import requests
+import logging
 import json
 
 
@@ -9,6 +10,8 @@ class DbClient():
     REQUEST_ADD_SCORE = 1
 
     REPLY_GOOD = 0
+
+    logger = logging.getLogger('bot.DbClient')
     
     @staticmethod
     def request_add_score(userid, data):
@@ -20,12 +23,12 @@ class DbClient():
         
         try: response = DbClient.session.post('http://127.0.0.1:8000', data=request)
         except requests.exceptions.ConnectionError as e:
-            print(e)
+            DbClient.logger.error(e)
             return
 
         #status = DbClient.validate_response(response)
         data = json.loads(response.text)
-        print(data)
+        DbClient.logger.info(data)
 
 
     ''' TODO
