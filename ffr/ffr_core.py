@@ -1,3 +1,4 @@
+import datetime
 import numpy as np
 import cv2
 import re
@@ -73,6 +74,7 @@ class FfrCore():
 
     def process_image(self):
         data = {
+            # Contains parsed text data for detection debugging
             'text' : {
                 'hour'          : None,
                 'minute'        : None,
@@ -98,7 +100,26 @@ class FfrCore():
                 'raw_goods'     : None,
                 'combo'         : None,
             },
-            'imgs' : []
+            # Contains images used for detection debugging
+            'imgs' : [],
+            # Contains data that is send to DB server
+            'req' : {
+                'game'          : 3,     # Game ID for FFR Scores
+                'date'          : None,  # Date on scorepost in Time-since-epoch format
+                'player'        : None,  # Username of the player
+                'title'         : None,  # Chart title
+                'artist'        : None,  # Song artist
+                'creator'       : None,  # Name of charter
+                'combo'         : None,  # Max combo value
+                'w0'            : None,  # Number of amazings
+                'w1'            : None,  # Number of perfects
+                'w2'            : None,  # Number of goods
+                'w3'            : None,  # Number of averages
+                'w4'            : None,  # Number of misses
+                'w5'            : None,  # Number of boos
+                'equiv'         : None,  # AAA equivalency
+                'raw'           : None   # Raw goods value
+            }
         }
 
         self.__process_data(data, FfrImgProcessing.get_date_info_img,   FfrTxtProcessing.get_date_info_txt)
@@ -113,6 +134,29 @@ class FfrCore():
         self.__process_data(data, FfrImgProcessing.get_boo_img,         FfrTxtProcessing.get_boo_txt)
         self.__process_data(data, FfrImgProcessing.get_aaa_equiv_img,   FfrTxtProcessing.get_aaa_equiv_txt)
         self.__process_data(data, FfrImgProcessing.get_raw_goods_img,   FfrTxtProcessing.get_raw_goods_txt)
+        self.__process_data(data, FfrImgProcessing.get_combo_img,       FfrTxtProcessing.get_combo_txt)
+
+        # Copy data to request
+        data['req']['date'] = datetime.datetime(
+            int(data['text']['year']), 
+            int(data['text']['month']), 
+            int(data['text']['day']), 
+            int(data['text']['hour'] + 12 if data['text']['ampm'] == 'pm' else data['text']['hour']),
+            int(data['text']['minute']),
+            int(data['text']['second'])).timestamp()
+        data['req']['player']  = str(data['text']['player'])
+        data['req']['title']   = str(data['text']['title'])
+        data['req']['artist']  = str(data['text']['artist'])
+        data['req']['creator'] = str(data['text']['creator'])
+        data['req']['combo']   = int(data['text']['combo'])
+        data['req']['w0']      = int(data['text']['amazing_score'])
+        data['req']['w1']      = int(data['text']['perfect_score'])
+        data['req']['w2']      = int(data['text']['good_score'])
+        data['req']['w3']      = int(data['text']['average_score'])
+        data['req']['w4']      = int(data['text']['miss_score'])
+        data['req']['w5']      = int(data['text']['boo_score'])
+        data['req']['equiv']   = float(data['text']['AAA_equiv'])
+        data['req']['raw']     = float(data['text']['raw_goods'])
 
         return data
 
