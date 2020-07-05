@@ -17,7 +17,8 @@ class FfrImgProcessing():
         'miss'        : [ 0.48, 0.52, 0.05, 0.25 ],
         'boo'         : [ 0.54, 0.58, 0.05, 0.25 ],
         'aaa_equiv'   : [ 0.25, 0.30, 0.35, 0.60 ],
-        'raw_goods'   : [ 0.30, 0.35, 0.40, 0.65 ]
+        'raw_goods'   : [ 0.30, 0.35, 0.40, 0.65 ],
+        'combo'       : [ 0.48, 0.53, 0.39, 0.64 ]
     }
 
 
@@ -93,6 +94,22 @@ class FfrImgProcessing():
         target_height = 38
 
         img = FfrImgProcessing.__crop_img(img, 'raw_goods')
+
+        # height, width, number of channels in image
+        height   = img.shape[0]
+        width    = img.shape[1]
+
+        # Enlarge image
+        img = cv2.resize(img, (0,0), fx=target_width/width, fy=target_height/height, interpolation=cv2.INTER_NEAREST)
+        return img
+
+
+    @staticmethod
+    def get_combo_img(img):
+        target_width = 312
+        target_height = 38
+
+        img = FfrImgProcessing.__crop_img(img, 'combo')
 
         # height, width, number of channels in image
         height   = img.shape[0]

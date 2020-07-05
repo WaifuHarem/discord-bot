@@ -95,7 +95,8 @@ class FfrCore():
                 'miss_score'    : None,
                 'boo_score'     : None,
                 'AAA_equiv'     : None,
-                'raw_goods'     : None
+                'raw_goods'     : None,
+                'combo'         : None,
             },
             'imgs' : []
         }

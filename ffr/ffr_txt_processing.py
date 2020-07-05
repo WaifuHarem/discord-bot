@@ -178,3 +178,16 @@ class FfrTxtProcessing():
             data['raw_goods'] = FfrTxtProcessing.txt_to_float(match.group(1))
 
         return data
+
+
+    @staticmethod
+    def get_combo_txt(text):
+        data = {}
+        print(text)
+
+        regex = r":\s*(\S+)$"
+        match = re.search(regex, text)
+        if match:
+            data['combo'] = FfrTxtProcessing.txt_to_float(match.group(1))
+
+        return data
