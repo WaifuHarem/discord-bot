@@ -137,26 +137,35 @@ class FfrCore():
         self.__process_data(data, FfrImgProcessing.get_combo_img,       FfrTxtProcessing.get_combo_txt)
 
         # Copy data to request
-        data['req']['date'] = datetime.datetime(
-            int(data['text']['year']), 
-            int(data['text']['month']), 
-            int(data['text']['day']), 
-            int(data['text']['hour'] + 12 if data['text']['ampm'] == 'pm' else data['text']['hour']),
-            int(data['text']['minute']),
-            int(data['text']['second'])).timestamp()
+        try:
+            data['req']['date'] = datetime.datetime(
+                int(data['text']['year']), 
+                int(data['text']['month']), 
+                int(data['text']['day']), 
+                int(data['text']['hour'] + 12 if data['text']['ampm'] == 'pm' else data['text']['hour']),
+                int(data['text']['minute']),
+                int(data['text']['second'])).timestamp()
+        except TypeError as e:
+            print('Unable to process score datetime;', e)
+
         data['req']['player']  = str(data['text']['player'])
         data['req']['title']   = str(data['text']['title'])
         data['req']['artist']  = str(data['text']['artist'])
         data['req']['creator'] = str(data['text']['creator'])
-        data['req']['combo']   = int(data['text']['combo'])
-        data['req']['w0']      = int(data['text']['amazing_score'])
-        data['req']['w1']      = int(data['text']['perfect_score'])
-        data['req']['w2']      = int(data['text']['good_score'])
-        data['req']['w3']      = int(data['text']['average_score'])
-        data['req']['w4']      = int(data['text']['miss_score'])
-        data['req']['w5']      = int(data['text']['boo_score'])
-        data['req']['equiv']   = float(data['text']['AAA_equiv'])
-        data['req']['raw']     = float(data['text']['raw_goods'])
+
+        try:
+            data['req']['combo']   = int(data['text']['combo'])
+            data['req']['w0']      = int(data['text']['amazing_score'])
+            data['req']['w1']      = int(data['text']['perfect_score'])
+            data['req']['w2']      = int(data['text']['good_score'])
+            data['req']['w3']      = int(data['text']['average_score'])
+            data['req']['w4']      = int(data['text']['miss_score'])
+            data['req']['w5']      = int(data['text']['boo_score'])
+            data['req']['equiv']   = float(data['text']['AAA_equiv'])
+            data['req']['raw']     = float(data['text']['raw_goods'])
+        except TypeError as e:
+            print('Unable to process score data;', e)
+
 
         return data
 
