@@ -26,8 +26,8 @@ class FfrTxtProcessing():
             data['minute'] = FfrTxtProcessing.txt_to_float(match.group(2))
             data['second'] = FfrTxtProcessing.txt_to_float(match.group(3))
             data['ampm']   = match.group(4)
-            data['month']  = FfrTxtProcessing.txt_to_float(match.group(5))
-            data['day']    = FfrTxtProcessing.txt_to_float(match.group(6))
+            data['day']    = FfrTxtProcessing.txt_to_float(match.group(5))
+            data['month']  = FfrTxtProcessing.txt_to_float(match.group(6))
             data['year']   = FfrTxtProcessing.txt_to_float(match.group(7))
 
         return data
