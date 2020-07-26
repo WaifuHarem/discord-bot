@@ -1,0 +1,4 @@
+[submodule "evalscreen_ocr"]
+	path = evalscreen_ocr
+	url = git@github.com:abraker95/evalscreen-ocr.git
+	branch = master

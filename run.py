@@ -2,6 +2,7 @@ import logging
 from logger import Logger
 logging.setLoggerClass(Logger)
 
+import datetime
 import requests
 import discord
 import string
@@ -14,8 +15,7 @@ import os
 from config import discord_token
 from utils import mkdir
 
-from ocr import OCR
-from ffr.ffr_core import FfrCore
+from evalscreen_ocr.ffr.ffr_core import FfrCore
 from db_client import DbClient
 
 client = discord.Client()
@@ -103,17 +103,18 @@ class DiscordBot():
 
     @staticmethod
     async def process_image(msg, filename):
-        data = FfrCore(filename).process_image()
-        if not DiscordBot.is_detection_valid(data['req'].values(), 0.6):
+        img_data, txt_data = FfrCore(filename).process()
+        
+        if not DiscordBot.is_detection_valid(txt_data.values(), 0.6):
             DiscordBot.logger.info('Invalid detection')
             return
 
         channel = msg.channel
         #channel = client.get_channel(DiscordBot.post_channel_id)
-        if channel: await DiscordBot.post(channel, data)
+        if channel: await DiscordBot.post(channel, txt_data, img_data)
         else: DiscordBot.logger.info('Channel does not exit')
 
-        DbClient.request(DbClient.REQUEST_ADD_SCORE, msg.author.id, data['req'])
+        DbClient.request(DbClient.REQUEST_ADD_SCORE, msg.author.id, DiscordBot.data_convert(txt_data))
 
 
     @staticmethod
@@ -127,11 +128,13 @@ class DiscordBot():
 
         
     @staticmethod
-    async def post(channel, data):
-        text = ''.join([ f'{key}: {val}\n' for key, val in data['text'].items() ])
+    async def post(channel, txt_data, img_data):
+        # Post detected text data to channel
+        text = ''.join([ f'{key}: {val}\n' for key, val in txt_data.items() ])
         await channel.send(text)
 
-        for img in data['imgs']:
+        # Post processed image data to channel
+        for img in img_data.values():
             random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
             filename = f'tmp/{random_string}.jpg'
 
@@ -140,6 +143,42 @@ class DiscordBot():
                 if channel: await channel.send(file=discord.File(f))
                 else: DiscordBot.logger.info('Channel does not exit')
             os.remove(filename)
+
+
+    @staticmethod
+    def data_convert(txt_data):
+        req_data = {}
+
+        try:
+            req_data['date'] = datetime.datetime(
+                int(txt_data['year']), 
+                int(txt_data['month']), 
+                int(txt_data['day']), 
+                int(txt_data['hour'] + 12 if txt_data['ampm'] == 'pm' else txt_data['hour']),
+                int(txt_data['minute']),
+                int(txt_data['second'])).timestamp()
+        except TypeError as e:
+            print('Unable to process score datetime;', e)
+
+        req_data['player']  = str(txt_data['player'])
+        req_data['title']   = str(txt_data['title'])
+        req_data['artist']  = str(txt_data['artist'])
+        req_data['creator'] = str(txt_data['creator'])
+
+        try:
+            req_data['combo'] = int(txt_data['combo'])
+            req_data['w0']    = int(txt_data['amazing_score'])
+            req_data['w1']    = int(txt_data['perfect_score'])
+            req_data['w2']    = int(txt_data['good_score'])
+            req_data['w3']    = int(txt_data['average_score'])
+            req_data['w4']    = int(txt_data['miss_score'])
+            req_data['w5']    = int(txt_data['boo_score'])
+            req_data['equiv'] = float(txt_data['AAA_equiv'])
+            req_data['raw']   = float(txt_data['raw_goods'])
+        except TypeError as e:
+            print('Unable to process score data;', e)
+
+        return req_data
 
 
 
