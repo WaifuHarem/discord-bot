@@ -57,8 +57,9 @@ class Logger(logging.getLoggerClass()):
             self.critical(msg)
     '''
 
-    
+    '''
     def exception(self, msg):
         msg = msg.strip()
         msg += '\n' + traceback.format_exc()
         self.error(msg)
+    '''
