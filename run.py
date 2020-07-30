@@ -2,6 +2,7 @@ import logging
 from logger import Logger
 logging.setLoggerClass(Logger)
 
+import importlib
 import datetime
 import requests
 import discord
@@ -13,42 +14,63 @@ import re
 import os
 
 from config import discord_token
+from cmd_core import CmdCore
 from utils import mkdir
 
+from cmd_proc import CmdProc
 from evalscreen_ocr.ffr.ffr_core import FfrCore
 from db_client import DbClient
 
 client = discord.Client()
 
 
-class DiscordBot():
+class DiscordBot(discord.AutoShardedClient):
+    """
+    Discord bot
+
+
+    """
 
     url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     post_channel_id = 672280665768591371
 
     logger = logging.getLogger('bot.discordBot')
 
-    @staticmethod
+
+    def __init__(self):
+        super().__init__()
+
+        self.cmds = {}
+        self.cmd_core = CmdCore(DiscordBot.logger, self)
+
+        CmdProc.init()
+
+        super().run(discord_token)
+
+
+
     @client.event
-    async def on_message(msg):
+    async def on_message(self, msg):
         # we do not want the bot to reply to itself
         if msg.author == client.user:
             return
 
-        await DiscordBot.process_cmd(msg)
-        await DiscordBot.process_attachments(msg)
-        await DiscordBot.process_links(msg)
+        cmd_data = CmdProc.parse_cmd(msg.content)
+        if cmd_data != None:
+            await CmdProc.exec_cmd(cmd_data, msg)
+
+        #await DiscordBot.process_attachments(msg)
+        #await DiscordBot.process_links(msg)
     
 
-    @staticmethod
     @client.event
-    async def on_ready():
+    async def on_ready(self):
         DiscordBot.logger.info('Bot ready')
-        await client.change_presence(activity=discord.Game('Use me! Try .help'), status=discord.Status.online, afk=False)
+        await self.change_presence(activity=discord.Game('Use me! Try >>help'), status=discord.Status.online, afk=False)
 
 
-    @staticmethod
-    async def process_cmd(msg):
+    async def process_cmd(self, msg):
+        '''
         if msg.content.startswith('.die'):
             DiscordBot.logger.info('Bot shutting down')
             await msg.channel.send('owh noe')
@@ -62,10 +84,10 @@ class DiscordBot():
 
         if msg.content.startswith('.test'):
             DbClient.request(DbClient.REQUEST_NOP, msg.author.id, {})
+        '''
 
 
-    @staticmethod
-    async def process_attachments(msg):
+    async def process_attachments(self, msg):
         for attachment in msg.attachments:
             random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
             filename = f'tmp/{random_string}.jpg'
@@ -74,7 +96,7 @@ class DiscordBot():
                 with open(filename, 'wb') as f:
                     await attachment.save(f)
 
-                await DiscordBot.process_image(msg, filename)
+                await self.process_image(msg, filename)
 
                 os.remove(filename)
 
@@ -82,8 +104,7 @@ class DiscordBot():
                 DiscordBot.logger.error(e)
 
 
-    @staticmethod
-    async def process_links(msg):
+    async def process_links(self, msg):
         urls = re.findall(DiscordBot.url_regex, msg.content)
         for url in urls:
             is_image_url = re.search(r"(?i)\.(jpe?g|png|gif)$", url[0])
@@ -96,29 +117,27 @@ class DiscordBot():
             with open(filename, 'wb') as handler:
                 handler.write(img_data)
 
-            await DiscordBot.process_image(msg, filename)                
+            await self.process_image(msg, filename)                
             
             os.remove(filename)
 
 
-    @staticmethod
-    async def process_image(msg, filename):
+    async def process_image(self, msg, filename):
         img_data, txt_data = FfrCore(filename).process()
         
-        if not DiscordBot.is_detection_valid(txt_data.values(), 0.6):
+        if not self.is_detection_valid(txt_data.values(), 0.6):
             DiscordBot.logger.info('Invalid detection')
             return
 
         channel = msg.channel
         #channel = client.get_channel(DiscordBot.post_channel_id)
-        if channel: await DiscordBot.post(channel, txt_data, img_data)
+        if channel: await self.post(channel, txt_data, img_data)
         else: DiscordBot.logger.info('Channel does not exit')
 
-        DbClient.request(DbClient.REQUEST_ADD_SCORE, msg.author.id, DiscordBot.data_convert(txt_data))
+        DbClient.request(DbClient.REQUEST_ADD_SCORE, msg.author.id, self.data_convert(txt_data))
 
 
-    @staticmethod
-    def is_detection_valid(values, threshold):
+    def is_detection_valid(self, values, threshold):
         '''
         If % of values that are not None exceeds 
         threshold, then the detection is valid
@@ -127,8 +146,7 @@ class DiscordBot():
         return (num_not_none/len(values)) > threshold
 
         
-    @staticmethod
-    async def post(channel, txt_data, img_data):
+    async def post(self, channel, txt_data, img_data):
         # Post detected text data to channel
         text = ''.join([ f'{key}: {val}\n' for key, val in txt_data.items() ])
         await channel.send(text)
@@ -145,8 +163,7 @@ class DiscordBot():
             os.remove(filename)
 
 
-    @staticmethod
-    def data_convert(txt_data):
+    def data_convert(self, txt_data):
         req_data = {}
 
         try:
@@ -187,4 +204,4 @@ if __name__ == '__main__':
     except OSError as e:
         print('Unable to make directory named "tmp";', e)
 
-    client.run(discord_token)
+    bot = DiscordBot()
