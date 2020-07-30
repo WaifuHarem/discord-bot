@@ -159,8 +159,6 @@ class CmdProc():
                 accepted_types = [ var_type.__name__ for var_type in args[param_name].var_types ]
                 await msg.channel.send(f'-{param_name} has wrong arg type. Accepted types: {accepted_types}')
                 return
-                
-        # return cmd_dict[cmd_name]['help']()
 
         # Build kargs
         ret = await func(msg, CmdProc.logger, **cmd_data['params'])
@@ -171,3 +169,11 @@ class CmdProc():
         if ret['status'] == -1:
             msg.channel.send(f'Error executing command: {ret["msg"]}')
             return
+
+
+    @staticmethod
+    def get_help(cmd_name):
+        if cmd_name not in CmdProc.cmd_dict:
+            return 'Command not found'
+
+        return CmdProc.cmd_dict[cmd_name]['help']()

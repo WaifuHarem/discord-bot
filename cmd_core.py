@@ -112,7 +112,7 @@ class CmdCore():
 
         def arg_text(self):
             opt_text  = '(optional)' if self.is_optional else ''
-            var_types = ','.join([ str(var_type) for var_type in self.var_types ])
+            var_types = ','.join([ var_type.__name__ for var_type in self.var_types ])
             return f'{var_types} {opt_text} |  {self.info}'
 
 
@@ -138,7 +138,7 @@ class CmdCore():
             args = [ ' : '.join(arg) for arg in args ]
 
             msg = self.info
-            if len(args) > 0: msg += '\n\nargs:\n' + '\n\t'.join(args)
+            if len(args) > 0: msg += '\n\nargs:' + '\n\t' + '\n\t'.join(args)
             else:             msg += '\n\nargs: None'
             
-            return { 'status' : 0, 'msg' : msg }
+            return msg
