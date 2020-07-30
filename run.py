@@ -69,24 +69,6 @@ class DiscordBot(discord.AutoShardedClient):
         await self.change_presence(activity=discord.Game('Use me! Try >>help'), status=discord.Status.online, afk=False)
 
 
-    async def process_cmd(self, msg):
-        '''
-        if msg.content.startswith('.die'):
-            DiscordBot.logger.info('Bot shutting down')
-            await msg.channel.send('owh noe')
-            exit(0)
-
-        if msg.content.startswith('.help'):
-            await msg.channel.send('TODO')
-
-        if msg.content.startswith('.score'):
-            pass
-
-        if msg.content.startswith('.test'):
-            DbClient.request(DbClient.REQUEST_NOP, msg.author.id, {})
-        '''
-
-
     async def process_attachments(self, msg):
         for attachment in msg.attachments:
             random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
