@@ -16,4 +16,4 @@ async def help(msg, logger, **kargs):
         return
 
     await msg.channel.send(CmdProc.get_help(cmd_name))
-    Cmd.ok()
+    return Cmd.ok()

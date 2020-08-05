@@ -10,4 +10,4 @@ from cmd_core import Cmd
 )
 async def score(msg, logger, **kargs):
     pass
-    Cmd.ok()
+    return Cmd.ok()
