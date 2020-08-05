@@ -37,7 +37,7 @@ class Cmd():
         user_perm = msg.author.permissions_in(msg.channel)
 
         for perm in perms:
-            if perm['id'] == Cmd.PERM_BOT_OWNER:
+            if perm['id'] == Cmd.perm.BOT_OWNER:
                 if msg.author.id != bot_owner_id:
                     return False
                 continue
