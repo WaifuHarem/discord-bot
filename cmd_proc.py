@@ -7,6 +7,7 @@ import inspect
 
 import config
 
+from cmd_core import Cmd
 
         
 class CmdProc():
@@ -112,10 +113,7 @@ class CmdProc():
 
     @staticmethod
     async def exec_cmd(cmd_data, msg):
-        cmd_name = cmd_data['name']
-        uid = msg.author.id
-
-        CmdProc.logger.info(f'uid: {uid}; cmd: {cmd_data["name"]} {cmd_data["params"]}')
+        CmdProc.logger.info(f'uid: {msg.author.id}; cmd: {cmd_data["name"]} {cmd_data["params"]}')
         
         # Get called command data
         func = CmdProc.cmd_dict[cmd_data['name']]['exec']
@@ -123,10 +121,8 @@ class CmdProc():
         args = CmdProc.cmd_dict[cmd_data['name']]['args']
 
         # Check if user has sufficient permissions to use function
-        #if perm > CmdCore.PERMISSION_PUBLIC:
-            #if not CmdCore.has_permissions(perm, uid):
-            #    return CmdCore.err(f'Insufficient permissions (Permission level {perm})')
-        # TODO
+        if not Cmd.has_permissions(perm, msg):
+            return Cmd.err(f'Insufficient permissions\nRequired: {Cmd.perm_str(perm)}')
 
         # Check if all required params are included
         req_args = [ arg_name for (arg_name, arg_data) in args.items() if not arg_data.is_optional ]

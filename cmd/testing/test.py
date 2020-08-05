@@ -4,7 +4,9 @@ from db_client import DbClient
 
 
 @Cmd.metadata(
-    perm = Cmd.PERM_ADMIN,
+    perm = [
+        Cmd.perm.BOT_OWNER
+    ],
     info = 'Test command and an example',
     args = {
         'str'   : Cmd.arg(str, Cmd.OPTIONAL, 'Optional str arg'),

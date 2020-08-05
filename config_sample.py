@@ -2,3 +2,4 @@
 
 tesseract_path = ''
 discord_token  = ''
+bot_owner_id   = 0

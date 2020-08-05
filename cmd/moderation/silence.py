@@ -4,7 +4,9 @@ from db_client import DbClient
 
 
 @Cmd.metadata(
-    perm = Cmd.PERM_ADMIN,
+    perm = [
+        Cmd.perm.MANAGE_ROLES
+    ],
     info = '',
     args = {
     }

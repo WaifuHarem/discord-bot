@@ -3,7 +3,9 @@ from cmd_core import Cmd
 
 
 @Cmd.metadata(
-    perm = Cmd.PERM_PUBLIC,
+    perm = [
+        Cmd.perm.PUBLIC
+    ],
     info = '',
     args = {
     }

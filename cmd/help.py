@@ -3,7 +3,9 @@ from cmd_proc import CmdProc
 
 
 @Cmd.metadata(
-    perm = Cmd.PERM_PUBLIC,
+    perm = [
+        Cmd.perm.PUBLIC
+    ],
     info = 'Prints help text',
     args = {
         'cmd' : Cmd.arg(str, Cmd.OPTIONAL, 'Command to get help for')
