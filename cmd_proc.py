@@ -39,30 +39,28 @@ class CmdProc():
         if not os.path.exists('cmd/'):
             raise Exception('cmd directory doesn\'t exist!')
 
-        cmds = []
 
         # Get a list of files to import
         for root, dirs, files in os.walk('cmd/'):
-            cmds += list([file[:-3] for file in files if file != '__init__.py' and file[-3:] == '.py'])
-            
-        CmdProc.logger.info(f'Commands found: {cmds}')
+            cmds = list([file[:-3] for file in files if file != '__init__.py' and file[-3:] == '.py'])
+            path = '.'.join([ mod for mod in root.split('/') if len(mod) != 0 ])
 
-        for cmd in cmds:
-            # Import command
-            CmdProc.logger.info(f'Importing cmd.{cmd}')
-            
-            try: module = importlib.import_module(f'cmd.{cmd}')
-            except ModuleNotFoundError as e:
-                error_msg = f'Cannot load module for command: {cmd}; {e}'
-                CmdProc.logger.critical(error_msg)
-                raise Exception(CmdProc.logger, error_msg)
+            for cmd in cmds:
+                # Import command
+                CmdProc.logger.info(f'Importing {path}.{cmd}')
+                
+                try: module = importlib.import_module(f'{path}.{cmd}')
+                except ModuleNotFoundError as e:
+                    error_msg = f'Cannot load module for command: {cmd}; {e}'
+                    CmdProc.logger.critical(error_msg)
+                    raise Exception(CmdProc.logger, error_msg)
 
-            # Load command
-            try: CmdProc.cmd_dict[cmd] = getattr(module, cmd)
-            except Exception as e:
-                error_msg = f'Cannot load command from module: {module}; {e}'
-                CmdProc.logger.critical(error_msg)
-                raise Exception(CmdProc.logger, error_msg)
+                # Load command
+                try: CmdProc.cmd_dict[cmd] = getattr(module, cmd)
+                except Exception as e:
+                    error_msg = f'Cannot load command from module: {module}; {e}'
+                    CmdProc.logger.critical(error_msg)
+                    raise Exception(CmdProc.logger, error_msg)
 
         CmdProc.logger.info('Running bot post initialization routines.')
 

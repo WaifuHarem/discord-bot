@@ -8,10 +8,9 @@ class Cmd():
 
     """
 
-    PERMISSION_PUBLIC  = 0  # Anyone can use this command
-    PERMISSION_SPECIAL = 1  # Special roles can use this command + mod + admin
-    PERMISSION_MOD     = 2  # Mods roles can use this command + admin
-    PERMISSION_ADMIN   = 3  # Only admin is able to use this command
+    PERM_PUBLIC  = 0  # Anyone can use this command
+    PERM_SPECIAL = 1  # Special roles can use this command + mod + admin
+    PERM_MOD     = 2  # Mods roles can use this command + admin
 
     OPTIONAL = True
     REQUIRED = False

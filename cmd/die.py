@@ -3,7 +3,7 @@ from cmd_core import Cmd
 
 
 @Cmd.metadata(
-    perm = Cmd.PERMISSION_ADMIN,
+    perm = Cmd.PERM_ADMIN,
     info = 'Kills the bot',
     args = {
     }
