@@ -63,16 +63,16 @@ class Cmd():
 
         # Check against bot owner
         if requestor_id == admin_user_id: return True
-        if perm > CmdCore.PERMISSION_MOD: return False
+        if perm > Cmd.PERMISSION_MOD: return False
 
         # Check against moderator
         bot_moderator_ids = self.get_bot_moderators()
         if requestor_id in bot_moderator_ids: return True
-        if perm > CmdCore.PERMISSION_SPECIAL: return False
+        if perm > Cmd.PERMISSION_SPECIAL: return False
 
         # Check against special role
         if self.validate_special_perm(requestor_id, args): return True
-        if perm > CmdCore.PERMISSION_PUBLIC: return False
+        if perm > Cmd.PERMISSION_PUBLIC: return False
         return True
 
 
