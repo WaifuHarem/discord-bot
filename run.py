@@ -10,6 +10,7 @@ import string
 import random
 import time
 import cv2
+import sys
 import re
 import os
 
@@ -180,6 +181,9 @@ class DiscordBot(discord.AutoShardedClient):
 
 
 if __name__ == '__main__':
+    if sys.version_info < (3, 8):
+        print('Python 3.8 or later is required!')
+
     try: mkdir('tmp')
     except OSError as e:
         print('Unable to make directory named "tmp";', e)
