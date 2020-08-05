@@ -128,15 +128,13 @@ class CmdProc():
         req_args = [ arg_name for (arg_name, arg_data) in args.items() if not arg_data.is_optional ]
         for req_arg in req_args:
             if not req_arg in cmd_data['params']:
-                await msg.channel.send(f'Missing required arg: {req_arg}')
-                return
+                return Cmd.err(f'Missing required arg: {req_arg}')
 
         # Validate params
         for param_name, param_value in cmd_data['params'].items():
             # Check if param exists in the command
             if param_name not in args:
-                await msg.channel.send(f'Command has no -{param_name} arg')
-                return
+                return Cmd.err(f'Command has no -{param_name} arg')
             
             # Check if all provided params match expected type
             type_match = False
@@ -151,18 +149,16 @@ class CmdProc():
 
             if not type_match:
                 accepted_types = [ var_type.__name__ for var_type in args[param_name].var_types ]
-                await msg.channel.send(f'-{param_name} has wrong arg type. Accepted types: {accepted_types}')
-                return
+                return Cmd.err(f'-{param_name} has wrong arg type. Accepted types: {accepted_types}')
 
         # Build kargs
         ret = await func(msg, CmdProc.logger, **cmd_data['params'])
         if ret == None:
             CmdProc.logger.warn(f'Command "{cmd_data["name"]}" returned a None value. Please make it return a Cmd.ok or Cmd.err')
-            return
+            return Cmd.ok()
 
         if ret['status'] == -1:
-            msg.channel.send(f'Error executing command: {ret["msg"]}')
-            return
+            return Cmd.err(f'Error executing command: {ret["msg"]}')
 
 
     @staticmethod

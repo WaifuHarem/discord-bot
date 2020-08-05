@@ -46,16 +46,16 @@ class DiscordBot(discord.AutoShardedClient):
         super().run(discord_token)
 
 
-
     @client.event
     async def on_message(self, msg):
         # we do not want the bot to reply to itself
         if msg.author == client.user:
             return
 
-        cmd_data = CmdProc.parse_cmd(msg.content)
-        if cmd_data != None:
-            await CmdProc.exec_cmd(cmd_data, msg)
+        if (cmd_data := CmdProc.parse_cmd(msg.content)) != None:
+            ret = await CmdProc.exec_cmd(cmd_data, msg)
+            if ret['status'] == -1:
+                await msg.channel.send(ret['msg'])
 
         await self.process_attachments(msg)
         await self.process_links(msg)
