@@ -16,37 +16,6 @@ class Cmd():
     OPTIONAL = True
     REQUIRED = False
 
-    def __init__(self, logger, obj):
-        self.logger = logger
-        self.obj    = obj
-
-
-    def get_cmd_dict(self, prefix='', require_help=True):
-        cmd_dict = { attr.replace('cmd_', prefix) : getattr(self, attr)
-            for attr in dir(self) 
-            if attr.startswith('cmd_') and hasattr(self, attr) 
-        }
-
-        if require_help:
-            for cmd_name in list(cmd_dict):
-                if not type(cmd_dict[cmd_name]) == dict:
-                    self.logger.warning('\tCommand "' + str(cmd_name) + '" does not have a help entry; Skipping...')
-                    del cmd_dict[cmd_name]
-                    continue
-
-                if not cmd_dict[cmd_name]['help']:
-                    self.logger.warning('\tCommand "' + str(cmd_name) + '" does not have a valid help entry (missing "help"); Skipping...')
-                    del cmd_dict[cmd_name]
-                    continue
-
-                if not cmd_dict[cmd_name]['exec']:
-                    self.logger.warning('\tCommand "' + str(cmd_name) + '" does not have a valid help entry (missing "exec"); Skipping...')
-                    del cmd_dict[cmd_name]
-                    continue
-
-        return cmd_dict
-
-
     @staticmethod
     def ok(msg=None):
         if msg == None: return { 'status' : 0 }

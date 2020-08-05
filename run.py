@@ -41,7 +41,6 @@ class DiscordBot(discord.AutoShardedClient):
         super().__init__()
 
         self.logger = logging.getLogger('bot.discordBot')
-        self.cmd_core = Cmd(self.logger, self)
 
         CmdProc.init()
         super().run(discord_token)
