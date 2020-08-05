@@ -44,7 +44,8 @@ class CmdProc():
         # Get a list of files to import
         for root, dirs, files in os.walk('cmd/'):
             cmds += list([file[:-3] for file in files if file != '__init__.py' and file[-3:] == '.py'])
-            CmdProc.logger.info(f'Commands found: {cmds}')
+            
+        CmdProc.logger.info(f'Commands found: {cmds}')
 
         for cmd in cmds:
             # Import command
