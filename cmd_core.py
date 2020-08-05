@@ -1,6 +1,6 @@
 
 
-class CmdCore():
+class Cmd():
 
     """
     Command core
@@ -60,6 +60,11 @@ class CmdCore():
 
 
     @staticmethod
+    def get(kargs, param, default=None):
+        return kargs[param] if param in kargs else default
+
+
+    @staticmethod
     def has_permissions(perm, uid):
         error_msg = 'Command \'permisions\' not implemented'
         #self.logger.error(error_msg)
@@ -100,6 +105,7 @@ class CmdCore():
         if self.validate_special_perm(requestor_id, args): return True
         if perm > CmdCore.PERMISSION_PUBLIC: return False
         return True
+
 
 
     class arg():

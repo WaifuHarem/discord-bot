@@ -14,12 +14,14 @@ import re
 import os
 
 from config import discord_token
-from cmd_core import CmdCore
 from utils import mkdir
 
+from cmd_core import Cmd
 from cmd_proc import CmdProc
+
 from evalscreen_ocr.ffr.ffr_core import FfrCore
 from db_client import DbClient
+
 
 client = discord.Client()
 
@@ -34,17 +36,14 @@ class DiscordBot(discord.AutoShardedClient):
     url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     post_channel_id = 672280665768591371
 
-    logger = logging.getLogger('bot.discordBot')
-
 
     def __init__(self):
         super().__init__()
 
-        self.cmds = {}
-        self.cmd_core = CmdCore(DiscordBot.logger, self)
+        self.logger = logging.getLogger('bot.discordBot')
+        self.cmd_core = Cmd(self.logger, self)
 
         CmdProc.init()
-
         super().run(discord_token)
 
 
@@ -59,13 +58,13 @@ class DiscordBot(discord.AutoShardedClient):
         if cmd_data != None:
             await CmdProc.exec_cmd(cmd_data, msg)
 
-        #await DiscordBot.process_attachments(msg)
-        #await DiscordBot.process_links(msg)
+        await self.process_attachments(msg)
+        await self.process_links(msg)
     
 
     @client.event
     async def on_ready(self):
-        DiscordBot.logger.info('Bot ready')
+        self.logger.info('Bot ready')
         await self.change_presence(activity=discord.Game('Use me! Try >>help'), status=discord.Status.online, afk=False)
 
 
@@ -83,11 +82,11 @@ class DiscordBot(discord.AutoShardedClient):
                 os.remove(filename)
 
             except Exception as e:
-                DiscordBot.logger.error(e)
+                self.logger.error(e)
 
 
     async def process_links(self, msg):
-        urls = re.findall(DiscordBot.url_regex, msg.content)
+        urls = re.findall(self.url_regex, msg.content)
         for url in urls:
             is_image_url = re.search(r"(?i)\.(jpe?g|png|gif)$", url[0])
             if is_image_url == None: return
@@ -108,13 +107,13 @@ class DiscordBot(discord.AutoShardedClient):
         img_data, txt_data = FfrCore(filename).process()
         
         if not self.is_detection_valid(txt_data.values(), 0.6):
-            DiscordBot.logger.info('Invalid detection')
+            self.logger.info('Invalid detection')
             return
 
         channel = msg.channel
-        #channel = client.get_channel(DiscordBot.post_channel_id)
+        #channel = client.get_channel(self.post_channel_id)
         if channel: await self.post(channel, txt_data, img_data)
-        else: DiscordBot.logger.info('Channel does not exit')
+        else: self.logger.info('Channel does not exit')
 
         DbClient.request(DbClient.REQUEST_ADD_SCORE, msg.author.id, self.data_convert(txt_data))
 
@@ -141,7 +140,7 @@ class DiscordBot(discord.AutoShardedClient):
             cv2.imwrite(filename, img) 
             with open(filename, 'rb') as f:
                 if channel: await channel.send(file=discord.File(f))
-                else: DiscordBot.logger.info('Channel does not exit')
+                else: self.logger.info('Channel does not exit')
             os.remove(filename)
 
 
@@ -157,7 +156,7 @@ class DiscordBot(discord.AutoShardedClient):
                 int(txt_data['minute']),
                 int(txt_data['second'])).timestamp()
         except TypeError as e:
-            print('Unable to process score datetime;', e)
+            self.logger.info(f'Unable to process score datetime; {e}')
 
         req_data['player']  = str(txt_data['player'])
         req_data['title']   = str(txt_data['title'])
@@ -175,7 +174,7 @@ class DiscordBot(discord.AutoShardedClient):
             req_data['equiv'] = float(txt_data['AAA_equiv'])
             req_data['raw']   = float(txt_data['raw_goods'])
         except TypeError as e:
-            print('Unable to process score data;', e)
+            self.logger.info(f'Unable to process score data; {e}')
 
         return req_data
 

@@ -1,24 +1,24 @@
-from cmd_core import CmdCore
+from cmd_core import Cmd
 from db_client import DbClient
 
 
 
-@CmdCore.metadata(
-    perm = CmdCore.PERMISSION_ADMIN,
+@Cmd.metadata(
+    perm = Cmd.PERMISSION_ADMIN,
     info = 'Test command and an example',
     args = {
-        'str'   : CmdCore.arg(str, CmdCore.OPTIONAL, 'Optional str arg'),
-        'int'   : CmdCore.arg(int, CmdCore.REQUIRED, 'Required int arg'),
-        'float' : CmdCore.arg(int, CmdCore.OPTIONAL, 'Optional float arg'),
+        'str'   : Cmd.arg(str, Cmd.OPTIONAL, 'Optional str arg'),
+        'int'   : Cmd.arg(int, Cmd.REQUIRED, 'Required int arg'),
+        'float' : Cmd.arg(int, Cmd.OPTIONAL, 'Optional float arg'),
     }
 )
 async def test(msg, logger, **kargs):
-    str_arg = kargs['str'] if 'str' in kargs else None
-    int_arg = kargs['int']
-    float_arg = kargs['float'] if 'float' in kargs else None
+    str_arg = Cmd.get(kargs, 'str')
+    int_arg = Cmd.get(kargs, 'int')
+    float_arg = Cmd.get(kargs, 'float')
 
     await msg.channel.send(f'str = {str_arg}   int = {int_arg}   float_arg = {float_arg}')
 
     DbClient.request(DbClient.REQUEST_NOP, msg.author.id, {})
 
-    CmdCore.ok()
+    return Cmd.ok()

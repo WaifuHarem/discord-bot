@@ -6,7 +6,6 @@ import re, string
 import inspect
 
 import config
-from cmd_core import CmdCore
 
 
         
@@ -163,7 +162,7 @@ class CmdProc():
         # Build kargs
         ret = await func(msg, CmdProc.logger, **cmd_data['params'])
         if ret == None:
-            CmdProc.logger.warn(f'Command "{cmd_data["name"]}" returned a None value. Please make it return a CmdCore.ok or CmdCore.err')
+            CmdProc.logger.warn(f'Command "{cmd_data["name"]}" returned a None value. Please make it return a Cmd.ok or Cmd.err')
             return
 
         if ret['status'] == -1:

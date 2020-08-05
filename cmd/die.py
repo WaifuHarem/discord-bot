@@ -1,9 +1,9 @@
-from cmd_core import CmdCore
+from cmd_core import Cmd
 
 
 
-@CmdCore.metadata(
-    perm = CmdCore.PERMISSION_ADMIN,
+@Cmd.metadata(
+    perm = Cmd.PERMISSION_ADMIN,
     info = 'Kills the bot',
     args = {
     }

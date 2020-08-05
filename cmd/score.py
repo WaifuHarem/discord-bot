@@ -1,13 +1,13 @@
-from cmd_core import CmdCore
+from cmd_core import Cmd
 
 
 
-@CmdCore.metadata(
-    perm = CmdCore.PERMISSION_PUBLIC,
+@Cmd.metadata(
+    perm = Cmd.PERMISSION_PUBLIC,
     info = '',
     args = {
     }
 )
 async def score(msg, logger, **kargs):
     pass
-    CmdCore.ok()
+    Cmd.ok()
