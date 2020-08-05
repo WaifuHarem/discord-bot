@@ -11,40 +11,6 @@ class Cmd():
 
     """
 
-    PERM_BOT_OWNER        = None
-    PERM_PUBLIC           = discord.Permissions(0)     # Anyone can use this command
-    PERM_INVITE           = discord.Permissions(create_instant_invite=True)
-    PERM_KICK             = discord.Permissions(kick_members=True)
-    PERM_BAN              = discord.Permissions(ban_members=True)
-    PERM_ADMIN            = discord.Permissions(administrator=True)
-    PERM_MANAGE_CHANNELS  = discord.Permissions(manage_channels=True)
-    PERM_MANAGE_SERVER    = discord.Permissions(manage_guild=True)
-    PERM_ADD_REACTIONS    = discord.Permissions(add_reactions=True)
-    PERM_VIEW_AUDIT       = discord.Permissions(view_audit_log=True)
-    PERM_PRIORITY_SPEAKER = discord.Permissions(priority_speaker=True)
-    PERM_STREAM           = discord.Permissions(stream=True)
-    PERM_READ_MSG         = discord.Permissions(read_messages=True)
-    PERM_SEND_MSG         = discord.Permissions(send_messages=True)
-    PERM_TTS_MSG          = discord.Permissions(send_tts_messages=True)
-    PERM_MANAGE_MSG       = discord.Permissions(manage_messages=True)
-    PERM_EMBED_LINKS      = discord.Permissions(embed_links=True)
-    PERM_ATTACH_FILES     = discord.Permissions(attach_files=True)
-    PERM_READ_MSG_HISTORY = discord.Permissions(read_message_history=True)
-    PERM_MENTION_EVERYONE = discord.Permissions(mention_everyone=True)
-    PERM_EXTERNAL_EMOJI   = discord.Permissions(external_emojis=True)
-    PERM_SERVER_STATS     = discord.Permissions(view_guild_insights=True)
-    PERM_CONNECT_VOICE    = discord.Permissions(connect=True)
-    PERM_SPEAK_VOICE      = discord.Permissions(speak=True)
-    PERM_MUTE_USERS       = discord.Permissions(mute_members=True)
-    PERM_DEFEAN_USERS     = discord.Permissions(deafen_members=True)
-    PERM_MOVE_USERS       = discord.Permissions(move_members=True)
-    PERM_VOICE_ACTIVATION = discord.Permissions(use_voice_activation=True)
-    PERM_CHANGE_NICKNAME  = discord.Permissions(change_nickname=True)
-    PERM_MANAGE_NICKNAMES = discord.Permissions(manage_nicknames=True)
-    PERM_MANAGE_ROLES     = discord.Permissions(manage_roles=True)
-    PERM_MANAGE_WEBHOOKS  = discord.Permissions(manage_webhooks=True)
-    PERM_MANAGE_EMOJI     = discord.Permissions(manage_emojis=True)
-
     OPTIONAL = True
     REQUIRED = False
 
