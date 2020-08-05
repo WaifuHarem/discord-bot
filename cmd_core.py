@@ -87,42 +87,6 @@ class Cmd():
         return ','.join([ perm['str'] for perm in perms ])
 
 
-    def cmd_about(self):
-        error_msg = 'Command \'about\' not implemented'
-        self.logger.error(error_msg)
-        raise NotImplementedError(error_msg)
-
-
-    def get_bot_moderators(self):
-        error_msg = '\'get_bot_moderators\' not implemented'
-        self.logger.error(error_msg)
-        raise NotImplementedError(error_msg)
-
-
-    def validate_special_perm(self, requestor_id, args):
-        error_msg = '\'validate_special\' not implemented'
-        self.logger.error(error_msg)
-        raise NotImplementedError(error_msg)
-
-
-    def validate_request(self, cmd_key, args=()):
-        perm, requestor_id = cmd_key
-
-        # Check against bot owner
-        if requestor_id == admin_user_id: return True
-        if perm > Cmd.PERMISSION_MOD: return False
-
-        # Check against moderator
-        bot_moderator_ids = self.get_bot_moderators()
-        if requestor_id in bot_moderator_ids: return True
-        if perm > Cmd.PERMISSION_SPECIAL: return False
-
-        # Check against special role
-        if self.validate_special_perm(requestor_id, args): return True
-        if perm > Cmd.PERMISSION_PUBLIC: return False
-        return True
-
-
 
     class arg():
 
